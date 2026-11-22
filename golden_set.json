@@ -1,0 +1,123 @@
+[
+  {
+    "id": 1,
+    "question": "What is a token in NLP?",
+    "reference": "A token is a piece of text, often a subword rather than a complete word. Tokenization lets a model process common and rare words, including across languages.",
+    "source_pages": [
+      5
+    ]
+  },
+  {
+    "id": 2,
+    "question": "How does Byte Pair Encoding (BPE) build subword tokens?",
+    "reference": "BPE starts with characters, counts adjacent pairs, repeatedly merges the most frequent pair, and stops when the target vocabulary size is reached.",
+    "source_pages": [
+      7
+    ]
+  },
+  {
+    "id": 3,
+    "question": "What is the difference between a one-hot vector and a trainable embedding?",
+    "reference": "One-hot vectors are high-dimensional and sparse, with a single active position and no encoded semantic similarity. Learned embeddings are dense, lower-dimensional vectors whose values carry distributed semantic information.",
+    "source_pages": [
+      23
+    ]
+  },
+  {
+    "id": 4,
+    "question": "How do static and contextual embeddings differ?",
+    "reference": "Static embeddings assign one fixed vector to a token regardless of context, while contextual embeddings change the token representation according to surrounding words and can represent different senses of a polysemous word.",
+    "source_pages": [
+      34
+    ]
+  },
+  {
+    "id": 5,
+    "question": "What do Query, Key, and Value represent in attention?",
+    "reference": "A Query represents the information a token seeks; Keys indicate what other tokens offer and are compared against the Query; Values provide the content combined using the attention weights.",
+    "source_pages": [
+      47
+    ]
+  },
+  {
+    "id": 6,
+    "question": "Why are attention scores divided by the square root of the key dimension?",
+    "reference": "The dot-product scores are divided by sqrt(d_k) to stabilize their scale as key dimension increases and reduce softmax saturation.",
+    "source_pages": [
+      55
+    ]
+  },
+  {
+    "id": 7,
+    "question": "What are the steps of scaled dot-product attention?",
+    "reference": "Calculate QK^T compatibility scores, scale by sqrt(d_k), apply softmax to obtain attention weights that sum to one, and use the weights to combine V into contextualized outputs.",
+    "source_pages": [
+      59
+    ]
+  },
+  {
+    "id": 8,
+    "question": "What is the difference between additive positional encoding and RoPE?",
+    "reference": "Additive positional encoding adds a position vector to token embeddings before computing Q, K and V. RoPE applies position-dependent rotations to projected Q and K vectors instead.",
+    "source_pages": [
+      73
+    ]
+  },
+  {
+    "id": 9,
+    "question": "Why is causal masking needed for autoregressive generation?",
+    "reference": "Causal masking prevents each position from attending to future tokens, avoiding information leakage during training and matching the left-to-right visibility available at inference time.",
+    "source_pages": [
+      92,
+      96
+    ]
+  },
+  {
+    "id": 10,
+    "question": "Where do queries, keys, and values come from in encoder-decoder cross-attention?",
+    "reference": "In cross-attention, Queries come from decoder target states, while Keys and Values come from encoder source states, so the decoder can attend to the source sequence.",
+    "source_pages": [
+      101
+    ]
+  },
+  {
+    "id": 11,
+    "question": "Why do Transformers use multi-head attention?",
+    "reference": "Multi-head attention allows multiple attention heads to capture different types of token relationships in parallel, such as syntactic or semantic relations, although specific specialization is not guaranteed.",
+    "source_pages": [
+      108
+    ]
+  },
+  {
+    "id": 12,
+    "question": "What is the role of the feed-forward network (FFN) in a Transformer block?",
+    "reference": "Attention mixes information across token positions, whereas the FFN independently applies a learned nonlinear transformation to the features at each token position.",
+    "source_pages": [
+      122
+    ]
+  },
+  {
+    "id": 13,
+    "question": "What does Layer Normalization normalize in a Transformer?",
+    "reference": "Layer normalization computes mean and variance across the feature dimensions of each token, normalizes those features, and applies learned scale and shift parameters to help stabilize representations.",
+    "source_pages": [
+      130
+    ]
+  },
+  {
+    "id": 14,
+    "question": "What are the main differences among encoder-only, decoder-only, and encoder-decoder Transformers?",
+    "reference": "Encoder-only models such as BERT use bidirectional context for understanding tasks; decoder-only models such as GPT use causal masking to generate text; encoder-decoder models such as T5 encode an input and generate an output using causal attention and cross-attention.",
+    "source_pages": [
+      160
+    ]
+  },
+  {
+    "id": 15,
+    "question": "What is the difference between zero-shot and few-shot prompting?",
+    "reference": "Zero-shot prompting provides an instruction without labeled examples; few-shot prompting adds a small number of examples in the prompt. Both can guide a pretrained model without changing its weights.",
+    "source_pages": [
+      164
+    ]
+  }
+]

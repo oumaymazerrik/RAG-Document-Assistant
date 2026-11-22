@@ -1,0 +1,16 @@
+﻿id,question,reference_pages,baseline_pages,reranked_pages,baseline_recall,reranked_recall,baseline_hit,reranked_hit,baseline_mrr,reranked_mrr
+1,What is a token in NLP?,[5],"[5, 48, 43, 145, 11]","[5, 145, 48, 52, 121]",1.0,1.0,1.0,1.0,1.0,1.0
+2,How does Byte Pair Encoding (BPE) build subword tokens?,[7],"[7, 6, 88, 99, 5]","[7, 6, 9, 5, 117]",1.0,1.0,1.0,1.0,1.0,1.0
+3,What is the difference between a one-hot vector and a trainable embedding?,[23],"[23, 21, 34, 41, 71]","[23, 21, 34, 75, 41]",1.0,1.0,1.0,1.0,1.0,1.0
+4,How do static and contextual embeddings differ?,[34],"[39, 35, 38, 37, 34]","[39, 35, 34, 37, 33]",1.0,1.0,1.0,1.0,0.2,0.3333333333333333
+5,"What do Query, Key, and Value represent in attention?",[47],"[122, 62, 47, 59, 49]","[47, 49, 122, 94, 62]",1.0,1.0,1.0,1.0,0.3333333333333333,1.0
+6,Why are attention scores divided by the square root of the key dimension?,[55],"[122, 59, 106, 54, 53]","[55, 59, 94, 105, 53]",0.0,1.0,0.0,1.0,0.0,1.0
+7,What are the steps of scaled dot-product attention?,[59],"[151, 122, 106, 53, 59]","[151, 102, 60, 53, 118]",1.0,0.0,1.0,0.0,0.2,0.0
+8,What is the difference between additive positional encoding and RoPE?,[73],"[74, 84, 133, 143, 83]","[74, 83, 74, 83, 80]",0.0,0.0,0.0,0.0,0.0,0.0
+9,Why is causal masking needed for autoregressive generation?,"[92, 96]","[133, 96, 102, 91, 138]","[91, 96, 133, 138, 102]",0.5,0.5,1.0,1.0,0.5,0.5
+10,"Where do queries, keys, and values come from in encoder-decoder cross-attention?",[101],"[140, 146, 142, 99, 70]","[140, 142, 99, 102, 146]",0.0,0.0,0.0,0.0,0.0,0.0
+11,Why do Transformers use multi-head attention?,[108],"[108, 118, 106, 110, 70]","[106, 110, 106, 107, 118]",1.0,0.0,1.0,0.0,1.0,0.0
+12,What is the role of the feed-forward network (FFN) in a Transformer block?,[122],"[123, 123, 122, 118, 2]","[123, 122, 118, 123, 119]",1.0,1.0,1.0,1.0,0.3333333333333333,0.5
+13,What does Layer Normalization normalize in a Transformer?,[130],"[130, 147, 123, 118, 148]","[118, 130, 148, 147, 131]",1.0,1.0,1.0,1.0,1.0,0.5
+14,"What are the main differences among encoder-only, decoder-only, and encoder-decoder Transformers?",[160],"[144, 146, 146, 160, 119]","[146, 146, 160, 139, 142]",1.0,1.0,1.0,1.0,0.25,0.3333333333333333
+15,What is the difference between zero-shot and few-shot prompting?,[164],"[164, 154, 102, 15, 176]","[164, 177, 15, 102, 154]",1.0,1.0,1.0,1.0,1.0,1.0

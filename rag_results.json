@@ -1,0 +1,348 @@
+[
+  {
+    "question": "What is a token in NLP?",
+    "reference": "A token is a piece of text, often a subword rather than a complete word. Tokenization lets a model process common and rare words, including across languages.",
+    "response": "In NLP, a **token** is a piece of text—often a sub‑word—that the tokenizer splits the input into. Tokens can be whole words for common terms, but rare words are broken into smaller sub‑word units so the model can handle them and work across languages. For example, the word “tokenization” is split into the tokens “token” and “##ization”【Page 5】.",
+    "retrieved_contexts": [
+      "What is a token?\nA token ≠ a word\nA token is a piece of text, often a subword. This strategy makes it possible to \nhandle rare words and various languages (Arabic, Darija, etc.).\nCommon word →  full token\nRare word →  split into subwords\nConcrete example\nThe word \"tokenization\" becomes:\ntoken\n##ization",
+      "What information can other tokens \nOFFER?\nEach token in the sequence doesn't just search — it also announces itself. It carries a kind of descriptive label that tells other tokens what it can \nbring them.\nThe token \"river\"\nAnnounces: \"I am a geographical/natural \ncontext. Useful if you're looking for a meaning \nrelated to water or terrain.\"\nThe token \"credit\"\nAnnounces: \"I am a financial/banking \ncontext. Useful if you're looking for a meaning \nrelated to money.\"\nThe token \"the\"\nAnnounces: \"I am a grammatical article. My \nsemantic content is limited.\"\nThese \"labels\" are what we call the Keys — the second role of the attention mechanism.",
+      "Meaning depends on neighboring context\nThe tokens that surround a word determine its interpretation. This is not a hand-coded rule, but a statistical regularity that the model can learn.\n🌊 Geographic context\n« river », « water », « bank », « current » →  bank = natural riverbank\n💶 Financial context\n« account », « credit », « money », « loan » →  bank = financial \ninstitution\nThe solution: allow each token to look at its neighbors and adjust its representation accordingly.",
+      "tokens. Cross-attention weights [n_tgt, n_src] determine which source \npositions are most relevant for each target token. The encoder is NOT \nrerun — H is fixed throughout generation.\nThe encoder is run exactly once per source sentence. The decoder is run once per generated token, growing the target prefix by one \ntoken each step.",
+      "From Token to ID\nThe vocabulary = a dictionary\nThe tokenizer maintains an indexed list of all known tokens. Each \ntoken receives a unique numerical identifier — its index in this \nvocabulary.\nThis ID is the only \"signal\" passed to the next step.\nIllustrative example\n\"The\" → ID 42 \"cat\" → ID 4271\n\"eats\" → ID 1587"
+    ],
+    "retrieved_pages": [
+      5,
+      48,
+      43,
+      145,
+      11
+    ],
+    "reference_pages": [
+      5
+    ],
+    "duration_seconds": 1.18
+  },
+  {
+    "question": "How does Byte Pair Encoding (BPE) build subword tokens?",
+    "reference": "BPE starts with characters, counts adjacent pairs, repeatedly merges the most frequent pair, and stops when the target vocabulary size is reached.",
+    "response": "Byte Pair Encoding (BPE) builds sub‑word tokens by iteratively merging the most frequent adjacent character pairs in a corpus until a target vocabulary size is reached. The process is:\n\n1. **Start with characters** – split every word into individual characters and add a special end‑of‑word marker (e.g., `</w>`).  \n2. **Count pairs** – count all adjacent character pairs in the corpus.  \n3. **Merge the most frequent pair** – fuse the most frequent pair into a new token and repeat the counting.  \n4. **Stop at vocabulary size** – continue until the desired vocabulary size \\(V\\) is achieved.  \n\nFor example, the word *“unbelievable”* is first split into characters. After successive BPE merges, it becomes the sub‑word tokens `[\"un\", \"believ\", \"able\"]`, reducing the token count from 12 characters to 3 tokens [Page 7].",
+    "retrieved_contexts": [
+      "SECTION 2 · TOKENIZATION ALGORITHMS\nBPE — Byte Pair Encoding\nHow it works\n01\nStart with characters\nSplit every word into individual characters. Add a special end-of-word marker \n(e.g. </w>).\n02\nCount pairs\nCount all adjacent character pairs in the corpus.\n03\nMerge the most frequent pair\nFuse the most frequent pair into a new token. Repeat.\n04\nStop at vocabulary size\nRepeat until the target vocabulary size V is reached.\nConcrete example\nShow the word: \"unbelievable\"\nCharacters\nu · n · b · e · l · i · e · v · a · \nb · l · e\nAfter BPE \nmerges\n\"un · believ · able\"\nFinal tokens\n[\"un\", \"believ\", \"able\"] →  3 tokens instead of 12 \ncharacters\nUsed by: GPT-2, GPT-4, LLaMA",
+      "The 3 Tokenization Algorithms\nTwo families of algorithms (BPE, WordPiece) share one same logic: find the best subwords to represent the text. SentencePiece is different — it is \na framework that wraps an underlying model (BPE or Unigram).\nBPE\nCriterion: frequency of pairs\nUsed by: GPT, LLaMA\nWordPiece\nCriterion: likelihood, ## prefix\nUsed by: BERT\nSentencePiece\nUnderlying model: BPE or Unigram\nUsed by: T5, LLaMA\n⚠ SentencePiece is a framework, not an \nalgorithm — it wraps BPE or Unigram.",
+      "BRIDGE · GENERATION\nEncoding vs. Decoding — Two Different \nRegimes\n🔍 Encoding (what we've seen so far)\nThe full sequence is available at once\nEvery token can attend to every other token\nGoal: build rich contextual representations\nExample: BERT encoder\n✍ Decoding / Generation\nTokens are generated one at a time\nAt step t, only tokens 0…t are known\nThe model must predict the NEXT token\nFuture tokens are unknown and must not be seen during training\nExample: GPT-style autoregressive generation\nThis difference in regime requires a different attention structure. The next cards explain why and how we enforce this constraint.",
+      "PAGE 27 · BRIDGE TO CROSS-ATTENTION\nSo Far — Tokens Have Only Looked at Their \nOwn Sequence\nSelf-Attention (recap)\nQ, K, and V all come from the same sequence. Every token queries \nand is queried within the same set of representations. This is \npowerful for building contextual representations within one \nsequence.\nThe limitation in encoder–decoder \nsettings\nIn a separate-memory encoder–decoder architecture, the decoder \ngenerates an output sequence while consulting a source sequence \n(e.g. the input sentence in translation). Self-attention alone cannot \nbridge information from the encoder's hidden states to the decoder.\nDecoder-only models (e.g. GPT) can include source text and \ninstructions in a single prompt, processed by causal self-",
+      "What is a token?\nA token ≠ a word\nA token is a piece of text, often a subword. This strategy makes it possible to \nhandle rare words and various languages (Arabic, Darija, etc.).\nCommon word →  full token\nRare word →  split into subwords\nConcrete example\nThe word \"tokenization\" becomes:\ntoken\n##ization"
+    ],
+    "retrieved_pages": [
+      7,
+      6,
+      88,
+      99,
+      5
+    ],
+    "reference_pages": [
+      7
+    ],
+    "duration_seconds": 0.76
+  },
+  {
+    "question": "What is the difference between a one-hot vector and a trainable embedding?",
+    "reference": "One-hot vectors are high-dimensional and sparse, with a single active position and no encoded semantic similarity. Learned embeddings are dense, lower-dimensional vectors whose values carry distributed semantic information.",
+    "response": "A one‑hot vector is a sparse, high‑dimensional representation that simply marks the presence of a token: it has a single “1” in a column corresponding to that token and zeros elsewhere, and it carries no semantic information beyond that identity [Page 23].  \n\nA trainable embedding, on the other hand, is a dense, lower‑dimensional vector that is learned by the model. Every dimension of the embedding carries part of the token’s meaning, allowing tokens with similar meanings to have similar vectors. The embedding is updated during training so that it captures semantic relationships between tokens [Page 23].",
+    "retrieved_contexts": [
+      "SECTION 6 · TRAINABLE EMBEDDINGS\nThe idea: a dense, learned, meaning-\nbearing vector\nOne-Hot (sparse)\n0 0\n1 0\n0\n50,000+ dimensions · Only one 1 · No meaning\nEmbedding (dense)\n0.32 −0.11\n0.87 0.45\n128–4096 dim · Every value matters · Learned\nAnalogy: a digital identity card for the token — semantic information is distributed across all dimensions of the vector, not isolated in \nindividual ones.",
+      "❓ What if the vector could LEARN \nmeaning?\nOne-hot\nCaptures PRESENCE\nTF-IDF\nCaptures IMPORTANCE\n???\nCaptures MEANING\nWhat if the vector was learned by the model, so that tokens with similar meaning have similar vectors? →  This is the idea behind Embedding.",
+      "Two Families of Embeddings\nTo solve polysemy, we need to understand the two fundamental approaches to representing tokens.\nStatic Embeddings\nOne fixed vector per token, regardless of context\nTrained once, then frozen\nFast and lightweight\n⚠ Cannot handle polysemy\nExample model: Word2Vec\nDynamic (Contextual) Embeddings\nThe vector changes depending on the surrounding sentence\nRecomputed at each inference pass\nHandles polysemy naturally\nExample model: BERT, GPT\n→  The rest of this section explains WHY static fails and HOW dynamic solves it.",
+      "RECAP LECTURE 1\nEach token has a vector… but it's isolated\nIn Lecture 1, we transformed each token into a rich, dense vector: the \nembedding. This vector encodes the general meaning of the word — its \ngrammatical category, its semantic field, its statistical relationships with other \nwords.\nBut this vector represents the token IN ISOLATION, without taking into \naccount the other words in the sentence. It is computed once and for all, \nindependently of the context in which it appears.\nHow can we make this vector depend on the OTHER tokens present in the \nsame sentence?\nCurrent Pipeline\n?Embeddin gToken\nThe \"?\" represents what is missing: a representation that \ntakes context into account.",
+      "RECAP\nWhere We Left Off\n✓  What We Know\nEmbeddings encode token meaning (Cours 1)\nQuery / Key / Value projections: Q = XW_Q, K = XW_K, V = XW_V \n(row-vector notation, X has shape [n, d_model])\nScaled dot-product self-attention contextualizes every token\n⚠ The Open Problem\nFull unmasked self-attention is permutation-equivariant: if input \ntoken rows are permuted, the contextual output rows are \ncorrespondingly permuted — F(PX) = P F(X). The output is not \nnumerically identical; the rows simply follow the input permutation.\nWithout a position signal, the model has no way to distinguish «Le \nchat dort» from «dort chat Le» beyond content differences.\nPart B begins here: how do we inject position into the representation?"
+    ],
+    "retrieved_pages": [
+      23,
+      21,
+      34,
+      41,
+      71
+    ],
+    "reference_pages": [
+      23
+    ],
+    "duration_seconds": 0.72
+  },
+  {
+    "question": "How do static and contextual embeddings differ?",
+    "reference": "Static embeddings assign one fixed vector to a token regardless of context, while contextual embeddings change the token representation according to surrounding words and can represent different senses of a polysemous word.",
+    "response": "Static and contextual embeddings differ in how they represent a token’s vector:\n\n| Feature | Static Embeddings | Contextual Embeddings |\n|---------|-------------------|-----------------------|\n| **Vector per token** | One fixed vector for each token ID, regardless of surrounding words. | The vector for a token is recomputed for each sentence, so the same token can have different vectors in different contexts. |\n| **Handling of polysemy** | Cannot distinguish multiple meanings; the same vector is used for all senses (e.g., “bank” in finance vs. river). | Handles polysemy naturally by producing different representations depending on context. |\n| **Training** | Trained once and then frozen; lookup matrix is static. | Recomputed at each inference pass; the representation is dynamic. |\n| **Typical models** | Word2Vec, GloVe, FastText. | BERT, GPT, Mistral. |\n\nThus, static embeddings are context‑independent and use a single vector per token, while contextual embeddings are context‑dependent, producing a variable vector for each token based on its surrounding words. [Page 35] [Page 38]",
+    "retrieved_contexts": [
+      "❓ How do we go from static to contextual?\nEach token needs to \"look at\" \nthe others.\nThe challenge\nWe know that a static embedding isn't enough. To contextualize, each token must interact with the other tokens in the sentence.\nThis mechanism is called ATTENTION — that's the topic of Lesson 2.",
+      "Static Embeddings = Context-Independent\nDefinition\n\"Static\" means context-independent: the same token ID always retrieves the \nsame initial vector, regardless of the surrounding sentence.\nThe lookup matrix is frozen after training — one ID = one row = one unique \nvector.\n⚠ Note: training is stochastic (random init + gradient descent) — but \nonce trained, the lookup is fully context-independent. Context only \nmatters later, during self-attention.\nConcrete consequence\nThe word 'bank' always returns the same vector — whether \nin:\n\"She works at \nthe bank.\"\n→  vector points toward \nfinance\n\"He sat by the \nbank of the \nriver.\"\n→  same vector, wrong \ndirection!\nSame problem for 'mouse': 🐭 vs 🖱 — one vector, two meanings.",
+      "Recap: Static vs Contextual\nCriterion Static Contextual\nVector 1 token →  1 fixed vector 1 token →  variable vector\nModels Word2Vec · GloVe · FastText BERT · GPT · Mistral\nPolysemy \u0000 Not handled ✓  Handled by attention\nIn the Transformer Input: static lookup Output of attention",
+      "Contextual Embeddings: the vector \ndepends on the sentence\n\"She works at the bank.\"\n→  Vector close to: finance, money, institution\n\"He sat by the bank of the river.\"\n→  Vector close to: river, shore, nature\nSame token, two different representations. It is the Attention mechanism (Lecture 2) that produces these contextual vectors.",
+      "Two Families of Embeddings\nTo solve polysemy, we need to understand the two fundamental approaches to representing tokens.\nStatic Embeddings\nOne fixed vector per token, regardless of context\nTrained once, then frozen\nFast and lightweight\n⚠ Cannot handle polysemy\nExample model: Word2Vec\nDynamic (Contextual) Embeddings\nThe vector changes depending on the surrounding sentence\nRecomputed at each inference pass\nHandles polysemy naturally\nExample model: BERT, GPT\n→  The rest of this section explains WHY static fails and HOW dynamic solves it."
+    ],
+    "retrieved_pages": [
+      39,
+      35,
+      38,
+      37,
+      34
+    ],
+    "reference_pages": [
+      34
+    ],
+    "duration_seconds": 0.52
+  },
+  {
+    "question": "What do Query, Key, and Value represent in attention?",
+    "reference": "A Query represents the information a token seeks; Keys indicate what other tokens offer and are compared against the Query; Values provide the content combined using the attention weights.",
+    "response": "**In a transformer’s self‑attention mechanism**\n\n| Symbol | What it represents | Why it matters |\n|--------|--------------------|----------------|\n| **Query (Q)** | The token’s *relevance request* – what kind of information it is looking for. | It is compared against every other token’s Key to decide how much that token should contribute. (Page 47) |\n| **Key (K)** | The token’s *label* or description of the information it holds. | It is used to match the Query; tokens whose Keys align well with the Query receive higher attention weights. (Page 47) |\n| **Value (V)** | The actual *content* that the token shares when it is “called upon.” | After the attention weights are computed from Q·Kᵀ, the weighted sum of the Values produces the token’s contextualized representation. (Page 49) |\n\nThe attention operation combines these three components:\n\n\\[\n\\text{Attention}(Q,K,V)=\\operatorname{softmax}\\!\\left(\\frac{QK^{\\top}}{\\sqrt{d_k}}\\right)V\n\\]\n\nThe dot product \\(QK^{\\top}\\) measures compatibility between each query–key pair, the softmax turns these scores into a probability distribution over tokens, and the weighted sum with \\(V\\) aggregates the actual information. (Page 59)",
+    "retrieved_contexts": [
+      "Attention Mixes Tokens; the FFN \nTransforms Features\nWhat attention actually computes\nAttention(X) = softmax  (XW  )(\n d  \nk\n(XW  )(XW  )Q K ⊤ ) V\nHere X is [n, d_model] — n tokens, each a row vector. The attention weights depend \non X through W_Q and W_K, and the softmax is nonlinear. So self-attention is NOT \nsimply linear in X. However, for fixed query-key weights, the output is linear in V — \nand attention alone provides no per-token nonlinear feature transformation.\nTwo distinct roles in every transformer block:\nAttention\nMixes information across token \npositions. Output at position i is a \nweighted combination of all value \nvectors.\nFFN\nTransforms features within each \ntoken independently. Applies a \nlearned nonlinear function to each \nposition's representation.\nWhat was missing",
+      "Self-Attention\nSelf-attention is the mechanism in which each token in a sequence \nattends to all tokens in that same sequence, including itself.\nThe result is an n×n attention matrix: each entry A[i, j] represents \nthe weight that token i assigns to token j during aggregation.\nThis is the default attention mode in a Transformer \nencoder. Darker cells indicate higher attention weights.\nn×n Matrix\nOne row per query token\nRows = Queries\nToken i looks at all others\nColumns = Keys\nToken j is looked at by all\nDark cell = High weight\nStrong attention between i and j",
+      "Here's a visual way to explain Query to students: the token sends a \"relevance \nrequest\" to the other tokens asking, \"Who has information that can help me \nunderstand myself?\"\nWhat information \ndo I need?\nThe token \"it\" needs context.1.\nIts Query represents the kind of information that would \nhelp.\n2.\nThe model compares that Query with what the other \ntokens advertise through their Keys.\n3.\nTokens whose Keys match the Query well receive more \nattention.\n4.\nTeaching analogy:\nQuery = the question you have.\nKey = the label describing what each person knows.\nValue = the actual information they give you.",
+      "The Complete Attention Equation\nThe entire mechanism fits in a single formula. Each term corresponds to a specific need we have identified:\nAttention(Q, K, V ) = softmax  ⋅(\n d  \nk\nQ ⋅ K T\n) V\n1\nQ · K ᵀ\nMeasures the compatibility between each (query, key) pair →  raw \nrelevance scores\n2\n÷ √ dₖ\nEnsures numerical stability — prevents softmax saturation for \nlarge dimensions\n3\nsoftmax( )\nConverts scores into positive attention weights summing to 1 — a \ndistribution\n4\n· V\nAggregates the weighted Values →  contextualized output vector",
+      "What does the selected token actually give \nyou?\nOnce the attention weights tell us WHICH tokens are relevant, we still need to \nknow WHAT they contribute. This is the role of the Value: it's the actual \ncontent a token shares when it's \"called upon\".\nQuery\nYou walk into a library and ask: \"I need books about rivers.\"\nKey\nEach book has a label on the spine describing its topic.\nValue\nThe actual pages you read once you pick the book.\nThe Key helps you FIND the right token, but the Value is what you actually \nGET from it.\nThink of it this \nway\n\"animal\"\nValue = rich semantic info about a living being, subject of \nthe sentence.\n\"tired\"\nValue = state/predicate information, describes a condition.\n\"street\"\nValue = location info, less relevant here →  low weight, \nsmall contribution."
+    ],
+    "retrieved_pages": [
+      122,
+      62,
+      47,
+      59,
+      49
+    ],
+    "reference_pages": [
+      47
+    ],
+    "duration_seconds": 1.07
+  },
+  {
+    "question": "Why are attention scores divided by the square root of the key dimension?",
+    "reference": "The dot-product scores are divided by sqrt(d_k) to stabilize their scale as key dimension increases and reduce softmax saturation.",
+    "response": "Attention scores are divided by the square‑root of the key dimension \\(d_k\\) to keep the raw relevance scores in a numerically stable range.  \nWhen \\(d_k\\) is large, the dot product \\(Q \\cdot K^{\\top}\\) can grow proportionally to \\(\\sqrt{d_k}\\), producing very large positive or negative values. These large values cause the softmax to saturate, yielding a distribution that is almost binary (one entry close to 1 and the rest close to 0). As a result, gradients through the softmax become nearly zero, which hampers learning. Dividing by \\(\\sqrt{d_k}\\) scales the scores down, preventing softmax saturation and ensuring that gradients can flow effectively during training.  \n\nThis scaling factor is explicitly mentioned in the complete attention equation and its purpose is described in the discussion on score stability.  \n\n[Page 59]  \n[Page 54]",
+    "retrieved_contexts": [
+      "Attention Mixes Tokens; the FFN \nTransforms Features\nWhat attention actually computes\nAttention(X) = softmax  (XW  )(\n d  \nk\n(XW  )(XW  )Q K ⊤ ) V\nHere X is [n, d_model] — n tokens, each a row vector. The attention weights depend \non X through W_Q and W_K, and the softmax is nonlinear. So self-attention is NOT \nsimply linear in X. However, for fixed query-key weights, the output is linear in V — \nand attention alone provides no per-token nonlinear feature transformation.\nTwo distinct roles in every transformer block:\nAttention\nMixes information across token \npositions. Output at position i is a \nweighted combination of all value \nvectors.\nFFN\nTransforms features within each \ntoken independently. Applies a \nlearned nonlinear function to each \nposition's representation.\nWhat was missing",
+      "The Complete Attention Equation\nThe entire mechanism fits in a single formula. Each term corresponds to a specific need we have identified:\nAttention(Q, K, V ) = softmax  ⋅(\n d  \nk\nQ ⋅ K T\n) V\n1\nQ · K ᵀ\nMeasures the compatibility between each (query, key) pair →  raw \nrelevance scores\n2\n÷ √ dₖ\nEnsures numerical stability — prevents softmax saturation for \nlarge dimensions\n3\nsoftmax( )\nConverts scores into positive attention weights summing to 1 — a \ndistribution\n4\n· V\nAggregates the weighted Values →  contextualized output vector",
+      "content. However, it produces a single weighted combination of value \nvectors per token.\nMulti-head attention adds multiple learned projection spaces and separate attention distributions. The next cards explain how.",
+      "❓\nWhy can scores be problematic?\nWe have our score matrix S = Q · K ᵀ. But when the dimension dₖ becomes large, the entries of S become very large in absolute value.\nThe saturation problem\nVery large scores →  the softmax saturates: one value crushes all \nothers, the distribution becomes nearly binary (0 or 1).\nThe effect on learning\nWhen the softmax saturates, gradients become nearly zero. \nBackpropagation barely transmits any useful information → \nlearning is blocked.\nHow can we stabilize these scores before passing them to the softmax?",
+      "→  vectors aligned\n→  high attention\nScore ≈ 0\nQ · K ᵀ  ≈ 0\n\"the\" querying \"bank\"\n→  vectors orthogonal\n→  low attention\nNegative Score\nQ · K ᵀ  < 0\nvectors point in opposite directions\n→  actively dissimilar\nThe dot product measures the angle between vectors: the more aligned, the \nmore relevant."
+    ],
+    "retrieved_pages": [
+      122,
+      59,
+      106,
+      54,
+      53
+    ],
+    "reference_pages": [
+      55
+    ],
+    "duration_seconds": 0.78
+  },
+  {
+    "question": "What are the steps of scaled dot-product attention?",
+    "reference": "Calculate QK^T compatibility scores, scale by sqrt(d_k), apply softmax to obtain attention weights that sum to one, and use the weights to combine V into contextualized outputs.",
+    "response": "**Scaled dot‑product attention** proceeds in the following steps:\n\n1. **Project the input tokens into query, key, and value spaces**  \n   For each token vector \\(x_i\\) in the input matrix \\(X\\) (size \\([n, d_{\\text{model}}]\\)), compute  \n   \\[\n   Q = XW_Q,\\qquad K = XW_K,\\qquad V = XW_V\n   \\]  \n   where \\(W_Q, W_K, W_V\\) are learned projection matrices.  \n   *[Page 122]*\n\n2. **Compute raw compatibility scores**  \n   Take the dot product of every query with every key:  \n   \\[\n   \\text{scores} = QK^{\\top}\n   \\]  \n   This measures how aligned each query is with each key.  \n   *[Page 53]*\n\n3. **Scale the scores**  \n   Divide the scores by \\(\\sqrt{d_k}\\) (the square root of the key dimension) to keep the softmax from saturating when \\(d_k\\) is large.  \n   *[Page 59]*\n\n4. **Apply the softmax**  \n   Convert the scaled scores into a probability distribution over key positions for each query:  \n   \\[\n   \\text{weights} = \\text{softmax}\\!\\left(\\frac{QK^{\\top}}{\\sqrt{d_k}}\\right)\n   \\]  \n   The softmax ensures the weights are positive and sum to 1.  \n   *[Page 151]*\n\n5. **Aggregate the values**  \n   Multiply the attention weights by the value matrix to obtain the contextualized output for each token:  \n   \\[\n   \\text{output} = \\text{weights}\\, V\n   \\]  \n   This step mixes information across token positions.  \n   *[Page 122]*\n\nThese five operations together implement the scaled dot‑product attention mechanism used in every attention head of a transformer.",
+    "retrieved_contexts": [
+      "Two Softmax Operations — Don't Confuse \nThem\nAttention Softmax\nQuestion: \"Which positions should I attend to?\"\nInput: scaled dot-product scores\nSelf-attention scores: [n, n] — each of n queries over n key \npositions\nCross-attention scores: [n_tgt, n_src] — each target query over all \nsource positions\nOutput: distribution over KEY POSITIONS for each query\nApplied inside every attention head at every layer.\nVocabulary Softmax\nQuestion: \"Which token should I generate next?\"\nInput: logits from the final linear projection — shape [1, |V|] at \ninference (last position only)\nDuring training: predictions can be computed at all target positions \n→  shape [n_tgt, |V|]\nOutput: distribution over TOKEN TYPES (the entire vocabulary)\nApplied once per generation step at the very end.",
+      "Attention Mixes Tokens; the FFN \nTransforms Features\nWhat attention actually computes\nAttention(X) = softmax  (XW  )(\n d  \nk\n(XW  )(XW  )Q K ⊤ ) V\nHere X is [n, d_model] — n tokens, each a row vector. The attention weights depend \non X through W_Q and W_K, and the softmax is nonlinear. So self-attention is NOT \nsimply linear in X. However, for fixed query-key weights, the output is linear in V — \nand attention alone provides no per-token nonlinear feature transformation.\nTwo distinct roles in every transformer block:\nAttention\nMixes information across token \npositions. Output at position i is a \nweighted combination of all value \nvectors.\nFFN\nTransforms features within each \ntoken independently. Applies a \nlearned nonlinear function to each \nposition's representation.\nWhat was missing",
+      "content. However, it produces a single weighted combination of value \nvectors per token.\nMulti-head attention adds multiple learned projection spaces and separate attention distributions. The next cards explain how.",
+      "→  vectors aligned\n→  high attention\nScore ≈ 0\nQ · K ᵀ  ≈ 0\n\"the\" querying \"bank\"\n→  vectors orthogonal\n→  low attention\nNegative Score\nQ · K ᵀ  < 0\nvectors point in opposite directions\n→  actively dissimilar\nThe dot product measures the angle between vectors: the more aligned, the \nmore relevant.",
+      "The Complete Attention Equation\nThe entire mechanism fits in a single formula. Each term corresponds to a specific need we have identified:\nAttention(Q, K, V ) = softmax  ⋅(\n d  \nk\nQ ⋅ K T\n) V\n1\nQ · K ᵀ\nMeasures the compatibility between each (query, key) pair →  raw \nrelevance scores\n2\n÷ √ dₖ\nEnsures numerical stability — prevents softmax saturation for \nlarge dimensions\n3\nsoftmax( )\nConverts scores into positive attention weights summing to 1 — a \ndistribution\n4\n· V\nAggregates the weighted Values →  contextualized output vector"
+    ],
+    "retrieved_pages": [
+      151,
+      122,
+      106,
+      53,
+      59
+    ],
+    "reference_pages": [
+      59
+    ],
+    "duration_seconds": 1.01
+  },
+  {
+    "question": "What is the difference between additive positional encoding and RoPE?",
+    "reference": "Additive positional encoding adds a position vector to token embeddings before computing Q, K and V. RoPE applies position-dependent rotations to projected Q and K vectors instead.",
+    "response": "Additive positional encoding (the “additive PE” used in the original Transformer) simply **adds a position vector to the token embedding before the attention projections**.  \n* It has no learned parameters – the position vectors are fixed (e.g., sinusoidal) and can be computed for any new position, though generalisation is not guaranteed.  \n* The dot‑product in self‑attention mixes content and position in a complex way, and the positional contribution is isolated only by the difference of the added vectors (see the repeated‑token example on Page 74).  \n\nRoPE (Rotary Position Embedding) **applies a rotation to the projected query and key vectors** instead of adding a separate vector.  \n* It has no positional lookup table; the base \\(B\\) is a configuration choice.  \n* The dot‑product now depends on the relative offset \\((n-m)\\) and on the token content, so the positional interaction is encoded through the rotation rather than a simple addition.  \n* RoPE does not guarantee unlimited‑context performance and closer tokens do not always receive larger scores (see the comparison on Page 83).  \n\nThus, additive PE adds a fixed vector to the embedding, while RoPE rotates the Q/K projections to encode position.",
+    "retrieved_contexts": [
+      "parameters.\nThis is the additive PE path, not a universal Transformer rule. RoPE \nand relative-bias methods inject position differently.\nRepeated-token \nexample\nConsider the word chat appearing at two positions p=1 and \np=5. Its token embedding X_chat is identical at both positions. \nThe position vectors PE(1) and PE(5) differ, so X'_1 ≠ X'_5. The \npositional contribution is isolated by the difference:\nX  −5 ′ X  =1 ′ P E(5) − P E(1)\nThis illustrates why a repeated token at two positions \nproduces different enriched representations.\nPosition p=1\nX_chat + PE(1) = X'_1\nsame meaning, early position\nPosition p=5\nX_chat + PE(5) = X'_5\nsame meaning, later position\nIllustrative example — the specific vector values depend on the chosen PE \nformula.",
+      "PAGE 13 · PRACTICAL COMPARISON\nWhich Positional Encoding Should You Use?\nA practical guide\nThe right choice depends on the task, architecture, and — most importantly \n— whether you are training from scratch or using a pretrained model.\nTraining from \nscratch, fixed-\nlength tasks\nSinusoidal PE (no parameters, \nanalytically computed) or \nlearned PE (flexible, requires \ndata). BERT uses learned \nabsolute positions.\nTraining from \nscratch, long-\ncontext or \ngeneration\nRoPE or relative-bias methods \nare popular choices. Used in \nLLaMA, GPT-NeoX, Mistral.\nUsing a pretrained model\nThe positional mechanism is fixed by the checkpoint. GPT-2 uses learned \nabsolute positions; GPT-3 uses learned positions; LLaMA uses RoPE. \nSwapping the positional method requires retraining.",
+      "The Encoder Block — Original Post-Norm \nLayout\nStructure (×N blocks)\nEach encoder block has exactly two sublayers, each with its own \nresidual branch and LayerNorm:\nMulti-Head Self-Attention + Add & Norm1.\nPosition-wise FFN + Add & Norm2.\nInput: X ∈  [n, d_model] — n token row vectors\nOutput: H ∈  [n, d_model] — same shape, enriched representations\nToken embeddings and positional information are supplied before \nthe stack — they are outside the N-block repetition boundary. All N \nblocks share the same structure but have different learned weights.\nKey Properties\nBidirectional: each token can attend to all valid source tokens (no \ncausal mask)\nPadding tokens are masked so they do not contribute to attention\nFull self-attention accesses the whole sequence from the first layer;",
+      "position\nFFN(Y) = GELU(Y W₁ + b₁) W₂ + b₂\nOutput: Add & Norm 3 →  LayerNorm 3\nFinal output: target hidden states, same \nshape [n_tgt, d_model]\nThe original decoder has THREE sublayers and THREE normalization stages — not two. The causal self-attention mask AND the cross-\nattention sublayer are both structural differences from the encoder. Embeddings are outside the ×N repetition boundary.",
+      "PAGES 11–12 · ROPE · CARD 3 OF 3\nRoPE vs. Additive PE — Honest Comparison\nAdditive Sinusoidal PE\nPosition added to embedding before projections\nFixed, no learned parameters\nDot product mixes content and position in a complex way\nCan be computed at new positions; generalization not \nguaranteed\nUsed in: original Transformer (Vaswani et al., 2017)\nRoPE\nPosition applied as rotation to projected Q and K\nNo learned positional lookup table; base B is a configuration choice\nDot product positional interaction depends on relative offset (n−m)\nDot product also depends on token content\nDoes not guarantee unlimited context performance\nCloser tokens do not always get larger scores\nUsed in: LLaMA, GPT-NeoX, Mistral, Falcon"
+    ],
+    "retrieved_pages": [
+      74,
+      84,
+      133,
+      143,
+      83
+    ],
+    "reference_pages": [
+      73
+    ],
+    "duration_seconds": 4.84
+  },
+  {
+    "question": "Why is causal masking needed for autoregressive generation?",
+    "reference": "Causal masking prevents each position from attending to future tokens, avoiding information leakage during training and matching the left-to-right visibility available at inference time.",
+    "response": "Causal masking is required so that the model learns to predict each token only from the tokens that have already been generated, exactly as it will do at inference time.  \n\n* During training the mask forces the self‑attention of the decoder to look only at positions ≤ t for the target token at position t, preventing the model from “seeing” future tokens that would otherwise be available in the full sequence. This avoids leakage of future information and ensures that the learned probabilities are valid for left‑to‑right generation [Page 96].  \n\n* The same visibility constraint must hold at inference: when the model generates token t it can only use the prefix 0…t‑1. The causal mask guarantees that the training objective matches the inference scenario, so the model does not rely on future context that will be absent during generation [Page 91].  \n\n* Because the mask is applied, all positions can still be computed in parallel during training, while at inference the model still respects the sequential dependency, allowing efficient autoregressive generation token by token [Page 138].",
+    "retrieved_contexts": [
+      "causal mask)\nPadding tokens are masked so they do not contribute to attention\nFull self-attention accesses the whole sequence from the first layer; \ndeeper layers refine representations\nThe encoder output H: [n_src, d_model] provides one contextual \nvector per source token\nFor cross-attention, learned projections of H produce K and V: K = \nH W_K, V = H W_V\nBERT-base: N=12 blocks, d_model=768. BERT-large: N=24 \nblocks, d_model=1024. The block structure is identical — only \nN and d_model differ.",
+      "PAGE 24 · GROWING RECEPTIVE FIELD\nEach Token Sees Only Its Past — A Growing \nWindow\nThe growing receptive field\nThe causal mask creates a growing receptive field: token 0 is isolated \n(attends only to itself), token 1 sees {0,1}, token 2 sees {0,1,2}, and so on. This \nperfectly mirrors what happens at inference time — at each generation step, \nonly previously generated tokens are available.\nPosition Token Can attend to\n0 Le {Le}\n1 chat {Le, chat}\n2 dort {Le, chat, dort}\nParallel computation\nDespite the sequential structure of the visibility constraint, all positions are \ncomputed in parallel during training. The mask enforces the constraint \nwithout sequential computation.\nTraining vs. inference\nTraining \n(teacher \nforcing)\nAll positions computed in \nparallel. Ground-truth",
+      "prefix after causal self-attention — not from the unknown future token being \ngenerated. The decoder has already processed the known prefix before \ncomputing cross-attention.\nKey properties\nA has shape [n_tgt, n_src] — rectangular, not square\nSoftmax is along source-key columns (axis=1)\nHead output is [n_tgt, d_v]\nSource and target lengths need not match\nThe full known source can be consulted (excluding \npadding)\nCausal masking applies to target self-attention, NOT to \ncross-attention over the full source\nIn a separate-memory encoder–decoder architecture, \ncross-attention provides the bridge between source \nand target. Decoder-only models handle this \ndifferently — source text is included in the prompt \nand processed by causal self-attention.",
+      "Running a separate forward pass for every prefix is possible but \ncomputationally inefficient — it scales as O(n²) forward passes. Causal \nmasking lets us compute all training positions in a single parallel forward \npass.\nThe visibility constraint\nTraining and inference must share the same visibility \nconstraint: at position t, only tokens 0…t are visible. This is \nenforced by the causal mask.\nReplace \"the model does not need to learn \nanything\" with: the model can learn shortcuts that \nexploit leaked future information. The goal is to \nprevent this.\n1\nPosition t=2 (chat)\nShould predict dort\n2\nWithout mask\nCan see dort →  leakage ✗\n3\nWith mask\nCannot see dort →  valid training ✓",
+      "Autoregressive Generation — Token by \nToken\nThe decoder generates text left to right, one token at a time. At each step it consumes all previously generated tokens to predict the next one.\nStep 1 — Start\nProvide a start token or prompt. Many models use a dedicated \n[BOS] token; generation can also begin from a supplied prompt \nprefix.\nStep 2 — Predict\nThe decoder processes the current prefix and outputs a probability \ndistribution over the vocabulary. Select the next token using a \ndecoding strategy (greedy, beam, sampling).\nStep 3 — Append\nAppend the selected token to the prefix. The new prefix is the input \nfor the next step.\nStep 4 — Stop\nRepeat until a stop condition is met: an end token (e.g. [EOS]) is \nselected, a maximum length is reached, or another stopping \ncriterion fires."
+    ],
+    "retrieved_pages": [
+      133,
+      96,
+      102,
+      91,
+      138
+    ],
+    "reference_pages": [
+      92,
+      96
+    ],
+    "duration_seconds": 12.99
+  },
+  {
+    "question": "Where do queries, keys, and values come from in encoder-decoder cross-attention?",
+    "reference": "In cross-attention, Queries come from decoder target states, while Keys and Values come from encoder source states, so the decoder can attend to the source sequence.",
+    "response": "In encoder‑decoder cross‑attention, the **queries** are produced from the decoder’s current state, while the **keys** and **values** are derived from the encoder’s output.  \n\n- The decoder supplies the query vectors \\(Q = U W_Q\\) (where \\(U\\) is the decoder state) [Page 142].  \n- The encoder supplies the key and value vectors \\(K = H W_K\\) and \\(V = H W_V\\) (where \\(H\\) is the encoder output) [Page 142].  \n\nThus, cross‑attention lets each decoder position attend to the full source sentence by using decoder queries against encoder keys/values. [Page 140]",
+    "retrieved_contexts": [
+      "applied on top.\nCross-Attention\nQueries come from the decoder (n_tgt \npositions).\nKeys and Values come from the encoder \noutput (n_src positions).\nShape: [n_tgt, n_src].\nSource padding is masked (−∞); there is NO \ncausal restriction — the full source sentence \nis already available.\nPurpose: let each decoder position attend to \nrelevant source positions.\nMasks are added to raw attention scores BEFORE softmax. After exp(−∞) = 0, masked positions receive exactly zero attention weight. \nPadded query outputs are ignored where relevant.",
+      "states, task head. Best for understanding tasks.\nEncoder-decoder (e.g. T5, original Transformer): encoder reads \nsource, decoder generates target via cross-attention. Best for \nsequence-to-sequence tasks.\nDecoder-only (e.g. GPT-2, LLaMA): causal self-attention only, \ngenerates from a prompt+prefix. Scales well for language modeling \nand generation.\nCross-attention attends to another set of representations — in encoder-decoder models this is the encoder output. Decoder-only models \nachieve conditioning through the prompt, not through a separate attention mechanism.",
+      "Cross-Attention — Queries from the \nDecoder, Keys and Values from the Encoder\nThe projections\nH is the final encoder output: H ∈  [n_src, d_model]\nU is the decoder state entering this sublayer: U ∈  [n_tgt, d_model]\nProjections:\nK = H W_K  (shape: [n_src, d_k])\nV = H W_V  (shape: [n_src, d_v])\nQ = U W_Q  (shape: [n_tgt, d_k])\nAttention weights: [n_tgt, n_src] — each decoder position attends over \nall source positions.\nCrossAttention(Q, K, V ) = softmax  V( dk\nQK T\n)\nWhat this achieves\nQ (Query) comes from the decoder: \"what do I need to know to \ngenerate the next target token?\"\nK, V (Keys & Values) come from the encoder: \"here is what the \nsource sentence offers\"\nThe decoder looks at the full source sentence at every generation \nstep",
+      "PAGE 27 · BRIDGE TO CROSS-ATTENTION\nSo Far — Tokens Have Only Looked at Their \nOwn Sequence\nSelf-Attention (recap)\nQ, K, and V all come from the same sequence. Every token queries \nand is queried within the same set of representations. This is \npowerful for building contextual representations within one \nsequence.\nThe limitation in encoder–decoder \nsettings\nIn a separate-memory encoder–decoder architecture, the decoder \ngenerates an output sequence while consulting a source sequence \n(e.g. the input sentence in translation). Self-attention alone cannot \nbridge information from the encoder's hidden states to the decoder.\nDecoder-only models (e.g. GPT) can include source text and \ninstructions in a single prompt, processed by causal self-",
+      "Attention — Part B\nPositional Encoding · Causal Masking · Cross-\nAttention · Multi-Head Attention\nCours 2 · ENSAM Maroc — We now complete the attention mechanism: we solve the \nordering problem with positional encoding, discover causal masking for \nautoregressive generation, cross-attention for encoder–decoder tasks, and multi-\nhead attention for richer learned representations."
+    ],
+    "retrieved_pages": [
+      140,
+      146,
+      142,
+      99,
+      70
+    ],
+    "reference_pages": [
+      101
+    ],
+    "duration_seconds": 8.69
+  },
+  {
+    "question": "Why do Transformers use multi-head attention?",
+    "reference": "Multi-head attention allows multiple attention heads to capture different types of token relationships in parallel, such as syntactic or semantic relations, although specific specialization is not guaranteed.",
+    "response": "Transformers use multi‑head attention because it lets the model learn several independent attention patterns in parallel, giving it a richer and more flexible representation than a single‑head mechanism could provide.\n\n* **Multiple learned projection spaces** – Each head has its own \\(W_Q, W_K, W_V\\) matrices, so the model can attend to the input in different “spaces” or feature dimensions.  \n  [Page 110]\n\n* **Independent attention distributions** – Every head produces its own attention weights, allowing the network to capture distinct relationships (e.g., syntactic, semantic, positional) simultaneously.  \n  [Page 110]\n\n* **Richer representational capacity** – By combining the outputs of many heads, the transformer can encode more complex patterns than a single attention distribution could.  \n  [Page 110]\n\n* **Specialization, overlap, or mixing of functions** – Heads may specialize in particular types of dependencies, overlap on some, or mix functions, and this behavior is learned automatically rather than hard‑coded.  \n  [Page 108]\n\n* **Addressing single‑head limitations** – A single head can represent multiple patterns, but it still produces only one weighted combination of value vectors per token, which may not capture all relevant relationships. Multi‑head attention alleviates this limitation.  \n  [Page 106]\n\nThus, multi‑head attention is a core component of the transformer block that enhances its ability to model complex, diverse relationships in the data.  \n[Page 118]",
+    "retrieved_contexts": [
+      "specialize, overlap, be redundant, or mix functions.\nPreserve these as illustrative examples of what multi-head attention can potentially capture, not as guaranteed behaviors of specific \nheads.",
+      "PAGE 43 · TRANSITION\nHow Do We Assemble Attention into a \nTransformer Block?\nAttention connects tokens. But \na complete Transformer block \nalso needs non-linear \ntransformations, \nnormalization, residual \nconnections, and layer \nstacking.\nWhat attention already provides\nTrainable neural module with learned projection matrices W_Q, \nW_K, W_V, W_O\nInput-dependent, nonlinear-in-input attention weights (softmax \nof content-dependent scores)\nRich contextual representations for each token\nFlexible: self, causal, cross, single-head, multi-head\nWhat comes next (Cours 3)\nFeed-forward network (FFN): position-wise nonlinear \ntransformation\nResidual connections: x + Attention(x) and x + FFN(x)\nLayer normalization: stabilizes training\nLayer stacking: multiple Transformer blocks",
+      "BRIDGE · MULTI-HEAD MOTIVATION\nOne Attention, Many Uses — But So Far, \nOne Head\nWhether self-, causal, or cross-\nattention — all variants we \nhave illustrated use a single \nset of projections W_Q, W_K, \nW_V. This is called single-head \nattention.\nWhat single-head attention does\nOne set of projections W_Q, W_K, W_V learns one attention \ndistribution over the sequence. The model can represent complex \npatterns — but with a single distribution, it may not simultaneously \ncapture all relevant relationships.\nAn important clarification\nA single head is not inherently limited to \"one relationship type\". One \nhead can represent multiple patterns depending on the query and \ncontent. However, it produces a single weighted combination of value \nvectors per token.",
+      "PAGE 33–34 · MULTI-HEAD QUESTION\nWhat If We Ran Several Attentions in \nParallel?\nInstead of one set of \nprojections W_Q, W_K, W_V — \nuse many, each learning a \ndifferent attention distribution \nindependently.\nThe key idea\nRun H independent attention operations in parallel, each with its own \nlearned projection matrices. Each head can develop a different \nattention pattern over the same input.\nWhat this adds\nMultiple learned projection spaces\nH separate attention distributions per layer\nRicher representational capacity\nHeads may specialize, overlap, or mix functions — this is learned, \nnot assigned\nThe next cards formalize this as multi-head attention.",
+      "Attention — Part B\nPositional Encoding · Causal Masking · Cross-\nAttention · Multi-Head Attention\nCours 2 · ENSAM Maroc — We now complete the attention mechanism: we solve the \nordering problem with positional encoding, discover causal masking for \nautoregressive generation, cross-attention for encoder–decoder tasks, and multi-\nhead attention for richer learned representations."
+    ],
+    "retrieved_pages": [
+      108,
+      118,
+      106,
+      110,
+      70
+    ],
+    "reference_pages": [
+      108
+    ],
+    "duration_seconds": 7.02
+  },
+  {
+    "question": "What is the role of the feed-forward network (FFN) in a Transformer block?",
+    "reference": "Attention mixes information across token positions, whereas the FFN independently applies a learned nonlinear transformation to the features at each token position.",
+    "response": "The feed‑forward network (FFN) is the part of a Transformer block that **transforms each token’s representation independently after the attention sub‑layer**.  \n- It expands the token’s feature vector (typically by a factor of 4), applies a non‑linear activation (e.g., GELU), and then compresses it back to the original dimension.  \n- Because the same FFN parameters are shared across all token positions, it provides a **rich, position‑wise feature detector that is independent of sequence length**.  \n- The FFN does not mix tokens; all token‑mixing happens in the attention sub‑layer, while the FFN refines the representation of each token separately.  \n\n[Page 123]  \n[Page 122]",
+    "retrieved_contexts": [
+      "The Feed-Forward Network (FFN)\nAfter attention mixes token representations, the FFN applies a learned nonlinear transformation independently at each token position.\nFFN(X) = GELU(XW  +1 b  ) W  +1 2 b  2\nMatrix Shape Role\nW  \n1 [d  , d  ]model ff Expand features\nW  \n2 [d  , d  ]ff model Compress back\n (input)X [n, d  ]model  token row vectorsn\nIntermediate [n, d\n \n]ff Expanded representation\nOutput [n, d\n \n]model Same shape as input\nBiases  and  broadcast over token positions.b  \n1 b  2\nExpansion Factor\n — a common choice, not a \nrequirement. The expansion gives the \nnetwork a richer intermediate space to \ndetect and combine features.\nd  =ff 4 × d  model\nParameter Sharing\nSame FFN parameters are shared across all \ntoken positions within a layer. Different",
+      "d  =ff 4 × d  model\nParameter Sharing\nSame FFN parameters are shared across all \ntoken positions within a layer. Different \ntransformer layers normally have different \nFFN parameters.\nActivation Variants\nThe original 2017 Transformer used ReLU. \nGPT-2 used GELU. The formula shown here is \na GPT-2-style example. Other FFN variants \nexist (e.g., gated FFNs in LLaMA).\nThe FFN has no cross-token interaction — it processes each position independently. All token mixing happens in the attention sublayer.",
+      "FFN\nTransforms features within each \ntoken independently. Applies a \nlearned nonlinear function to each \nposition's representation.\nWhat was missing\nPer-token nonlinear transformation\nRicher intermediate feature space (expand then \ncompress)\nLearned feature detectors independent of \nsequence length\nThe FFN is sometimes called a 'position-wise' \nnetwork because the same parameters are \napplied independently at every token \nposition within a layer.",
+      "Residual connections: x + Attention(x) and x + FFN(x)\nLayer normalization: stabilizes training\nLayer stacking: multiple Transformer blocks\nTraining objectives: language modeling, masked LM, etc.\nAttention is already a trainable neural module and contains nonlinear input-dependent weights (the softmax). The next chapter \nintroduces the standard FFN, residual, normalization and stacking architecture.",
+      "An LLM = (essentially) a Transformer\nToday's large models\nChatGPT · Claude · Mistral\nLLaMA · Gemini · Falcon\nAll are built on the Transformer.\nOur goal\nUnderstanding the Transformer means understanding modern AI. \nWe'll build it piece by piece, starting with the inputs.\nTransformer Architecture\nrelies on\nLLM"
+    ],
+    "retrieved_pages": [
+      123,
+      123,
+      122,
+      118,
+      2
+    ],
+    "reference_pages": [
+      122
+    ],
+    "duration_seconds": 9.21
+  },
+  {
+    "question": "What does Layer Normalization normalize in a Transformer?",
+    "reference": "Layer normalization computes mean and variance across the feature dimensions of each token, normalizes those features, and applies learned scale and shift parameters to help stabilize representations.",
+    "response": "Layer Normalization in a Transformer normalizes **each token’s feature vector independently**.  \nIt computes the mean (μ) and variance (σ²) across the \\(d_{\\text{model}}\\) features of a single token, then centers and scales that token’s representation:\n\n\\[\n\\text{LayerNorm}(x)=\\gamma \\odot \\frac{x-\\mu}{\\sigma}+\\beta\n\\]\n\nThus, the normalization is performed per‑token, not across the sequence or batch, and it operates on the token’s internal feature dimensions. [Page 130] [Page 148]",
+    "retrieved_contexts": [
+      "Layer Normalization — Stabilizing Each \nToken's Features\nLayerNorm(x) = γ ⊙\n \n+\n σ + ε2\nx − μ β\nFor one token with features x = [100, 2, 50], γ = 1, β = 0, ε = 10 ⁻ ⁵:\nQuantity Value\nμ (mean) (100 + 2 + 50) / 3 ≈ 50.667\nσ² (variance) ≈ 1600.889\nNormalized output [1.233, −1.216, −0.017]\nWhat is normalized\nMean and variance are computed across one \ntoken's d_model features — not across the \nsequence or the batch. Each token is \nnormalized independently.\nLearned parameters\nγ (scale) and β (shift) are learned per-feature \nparameters, initialized to 1 and 0. They allow \nthe model to undo normalization if needed. \nZero mean and unit variance describe the \nstandardized intermediate — not necessarily \nthe final output after γ and β.\nNote on the figure\nThe two panels use different vertical scales.",
+      "Post-Norm vs Pre-Norm — Where Does \nNormalization Go?\nPost-Norm: y=Norm(x+ F(x)) Pre-Norm: y= x+ F(Norm(x))\nPost-Norm (original Transformer, 2017)\nNormalization applied AFTER the residual addition\nUsed in the original \"Attention Is All You Need\" paper\nCan be less stable at large scale — the unnormalized residual sum \nenters the next sublayer\nRequires careful learning rate warmup\nPre-Norm (GPT-2 and most modern \nmodels)\nNormalization applied BEFORE the sublayer, to the input\nThe residual path carries the unnormalized signal directly\nGPT-2 uses Pre-LayerNorm — a documented example\nOften improves optimization behavior, especially at scale\nDoes NOT imply RMSNorm — Pre-Norm and the choice of norm \ntype are independent",
+      "d  =ff 4 × d  model\nParameter Sharing\nSame FFN parameters are shared across all \ntoken positions within a layer. Different \ntransformer layers normally have different \nFFN parameters.\nActivation Variants\nThe original 2017 Transformer used ReLU. \nGPT-2 used GELU. The formula shown here is \na GPT-2-style example. Other FFN variants \nexist (e.g., gated FFNs in LLaMA).\nThe FFN has no cross-token interaction — it processes each position independently. All token mixing happens in the attention sublayer.",
+      "Residual connections: x + Attention(x) and x + FFN(x)\nLayer normalization: stabilizes training\nLayer stacking: multiple Transformer blocks\nTraining objectives: language modeling, masked LM, etc.\nAttention is already a trainable neural module and contains nonlinear input-dependent weights (the softmax). The next chapter \nintroduces the standard FFN, residual, normalization and stacking architecture.",
+      "LayerNorm vs RMSNorm — Two \nNormalization Functions\nPre-Norm vs Post-Norm is a placement choice. LayerNorm vs RMSNorm is a separate choice of normalization function. They are independent \ndecisions.\nLayerNorm (original Transformer, GPT-2)\nLayerNorm(x) = γ ⊙  +\n σ + ϵ2\nx − μ β\nComputes mean  and variance  across d_model features for \neach token\nμ σ2\nSubtracts mean (centering) and divides by std (scaling)\n and  are learned per-feature parametersγ β\nGPT-2 uses Pre-LayerNorm (Pre-Norm placement + LayerNorm \nfunction)\nRMSNorm (LLaMA, Mistral, Qwen)\nRMSNorm(x) = γ ⊙  \n mean(x ) + ϵ2\nx\nDrops the mean-centering step (no  subtraction)μ\nDivides by the root-mean-square of x\n is a learned per-feature scale; no  shift parameterγ β\nSimpler computation; runtime benefits depend on architecture,"
+    ],
+    "retrieved_pages": [
+      130,
+      147,
+      123,
+      118,
+      148
+    ],
+    "reference_pages": [
+      130
+    ],
+    "duration_seconds": 9.78
+  },
+  {
+    "question": "What are the main differences among encoder-only, decoder-only, and encoder-decoder Transformers?",
+    "reference": "Encoder-only models such as BERT use bidirectional context for understanding tasks; decoder-only models such as GPT use causal masking to generate text; encoder-decoder models such as T5 encode an input and generate an output using causal attention and cross-attention.",
+    "response": "**Main differences**\n\n| Architecture | Core attention pattern | Key components | Typical use‑case |\n|--------------|------------------------|----------------|------------------|\n| **Encoder‑only** (e.g., BERT) | Bidirectional self‑attention (full context) | Encoder stack, task head | Understanding tasks (classification, embeddings) [Page 160] |\n| **Decoder‑only** (e.g., GPT‑2, LLaMA) | Causal self‑attention (masked, only past tokens) | Decoder stack, no cross‑attention | Generation from a prompt+prefix; language modeling, text generation [Page 146] |\n| **Encoder‑decoder** (e.g., T5, original Transformer) | Encoder: full self‑attention; Decoder: causal self‑attention + cross‑attention to encoder output | Encoder stack, decoder stack, cross‑attention sublayer | Sequence‑to‑sequence tasks (translation, summarization) [Page 144, 146] |\n\n**Key distinctions**\n\n1. **Attention scope**  \n   * Encoder‑only sees the entire sequence in both directions.  \n   * Decoder‑only sees only past positions (causal mask).  \n   * Encoder‑decoder uses full context in the encoder and causal + cross‑attention in the decoder.  \n\n2. **Presence of cross‑attention**  \n   * Only encoder‑decoder models have a cross‑attention sublayer that attends to encoder outputs.  \n   * Encoder‑only and decoder‑only lack cross‑attention.  \n\n3. **Generation mechanism**  \n   * Encoder‑only models do not generate tokens; they produce contextual representations for downstream tasks.  \n   * Decoder‑only models generate token‑by‑token from a prompt, conditioning solely on the prompt prefix.  \n   * Encoder‑decoder models generate the target sequence while attending to the source via cross‑attention.  \n\n4. **Typical tasks**  \n   * Encoder‑only → understanding (classification, embeddings).  \n   * Decoder‑only → generation (language modeling, text completion).  \n   * Encoder‑decoder → sequence‑to‑sequence (translation, summarization).  \n\nThese differences are summarized in the course notes: the encoder‑only block is bidirectional, the decoder‑only block is causal, and the encoder‑decoder block combines both with cross‑attention [Page 144, 146, 160].",
+    "retrieved_contexts": [
+      "Complete Encoder-Decoder Transformer — \nOverview\nHow the two stacks connect\nSource tokens →  Source embedding + positions →  Encoder blocks ×N \n→  Encoder output H: [n_src, d_model]\nH is computed ONCE and reused at every decoder step. Learned \nprojections of H produce K and V for every cross-attention sublayer in \nthe decoder.\nTarget prefix (BOS, y₁, …) →  Target embedding + positions →  Decoder \nblocks ×N →  Linear vocabulary projection →  Softmax →  Token \nselection →  Append selected token →  repeat\nGeneration loop\nStep 1: Encode the source sentence once →  H1.\nStep 2: Initialize target prefix with [BOS] (or prompt)2.\nStep 3: Run decoder on current prefix →  logits at last position3.\nStep 4: Select next token (greedy, beam, or sampling)4.\nStep 5: Append selected token to prefix5.",
+      "Decoder-Only Architecture — GPT Style\nWhat changes in decoder-only\nA decoder-only model (e.g. GPT-2) conditions on a single sequence \ncontaining both the prompt and the generated prefix. There is no \nseparate encoder stack and no cross-attention sublayer.\nEach block has two sublayers:\nCausal self-attention (masked)1.\nPosition-wise FFN2.\nThe model generates by extending the prompt prefix one token at a \ntime. It can perform translation by placing the source text in the \nprompt — no separate encoder or cross-attention is needed.\nThree architecture families (see figure)\nEncoder-only (e.g. BERT): bidirectional self-attention, contextual \nstates, task head. Best for understanding tasks.\nEncoder-decoder (e.g. T5, original Transformer): encoder reads",
+      "states, task head. Best for understanding tasks.\nEncoder-decoder (e.g. T5, original Transformer): encoder reads \nsource, decoder generates target via cross-attention. Best for \nsequence-to-sequence tasks.\nDecoder-only (e.g. GPT-2, LLaMA): causal self-attention only, \ngenerates from a prompt+prefix. Scales well for language modeling \nand generation.\nCross-attention attends to another set of representations — in encoder-decoder models this is the encoder output. Decoder-only models \nachieve conditioning through the prompt, not through a separate attention mechanism.",
+      "Which Transformer family generates text?\nEncoder — BERT\n■ ■ ■ ■\n■ ■ ■ ■\n■ ■ ■ ■\n■ ■ ■ ■\nsees the whole text, in both directions\n→  understand, classify, embeddings\nDecoder only — GPT\n■\n■ ■\n■ ■ ■\n■ ■ ■ ■\neach position sees only the past (causal \nmask)\n→  generate\nEncoder-decoder — T5\nEncoder reads the input (full mask)\nDecoder writes the output (causal mask \n+ cross-attention)\n→  translate, summarize\nWith a decoder, we predict tokens: P(next token | context). Example: P(\"mouse\" | \"The cat eats the\") = 0.66.\nToday's generative LLMs are almost all decoder-only Transformers.\nAttention masks from Course 2: rows = the position that looks, columns = the positions it can see.",
+      "MODULE M237 · CHAPTER 3\nThe Transformer Block · \nEncoder · Decoder\nAssembling the pieces into a working machine. Prerequisites: Embeddings & \npositional encoding (Ch. 1) · Full attention — Q/K/V, multi-head, causal (Ch. 2). This \nchapter closes the architecture loop and opens the door to BERT, GPT, T5, and \nmodern LLMs.\n PROF. YASSIR MATRANE"
+    ],
+    "retrieved_pages": [
+      144,
+      146,
+      146,
+      160,
+      119
+    ],
+    "reference_pages": [
+      160
+    ],
+    "duration_seconds": 9.16
+  },
+  {
+    "question": "What is the difference between zero-shot and few-shot prompting?",
+    "reference": "Zero-shot prompting provides an instruction without labeled examples; few-shot prompting adds a small number of examples in the prompt. Both can guide a pretrained model without changing its weights.",
+    "response": "Zero‑shot prompting gives the model only the task instruction (e.g., “Classify this review as positive or negative.”) and no example inputs, so the model must infer how to perform the task solely from the instruction itself.  \nFew‑shot prompting adds a small number of labeled examples to the instruction (e.g., two example reviews with their labels) so the model can see concrete instances of the task before it processes the new input.  \n\nThus, the key difference is that zero‑shot uses instruction only, while few‑shot includes a few example demonstrations in the prompt. [Page 164]",
+    "retrieved_contexts": [
+      "How can one model do a new \ntask without retraining?\nZero-shot: instruction only\nClassify this review as positive or negative.\nReview: \"livraison sri3a w service mzyan\"\nAnswer:\n↓\nPOSITIVE\nFew-shot: instruction + 2 examples\nClassify each review as positive or negative.\n\"lmakla bnina bzaf\" →  positive\n\"lcommande wslat barda\" →  negative\n\"livraison sri3a w service mzyan\" →\n↓\nPOSITIVE\n🔒 Weights unchanged. 0 extra labels, 0 fine-tuning.\nIn-context learning: the task is described inside the input text (the prompt); the model adapts for the duration of one request.\nThe task moves from the weights into the prompt: this is what makes Parts 3 to 6 possible.\nDarija: \"the food is very tasty\" · \"the order arrived cold\" · \"fast delivery and good service\".",
+      "Top-p (Nucleus) Adaptive (≥p mass) No (random) LLMs, creative writing\nTemperature: Sharpening or Flattening the Distribution\nP\n \n(t\n \n) =T i\n \n, T >\n exp(logit  /T )∑j j\nexp(logit  /T )i 0\nT →  0 is a limiting case that approaches greedy (argmax); treat T=0 as an implementation-specific convention, not literal division by zero.\nT < 1\nConcentrates probability on top tokens — \nmore focused, less creative.\nT = 1\nOriginal model distribution — no change.\nT > 1\nSpreads probability more evenly — more \nrandom, more creative.\nExample: T=0.5 makes the model more decisive; T=1.5 makes it more adventurous.\nIn practice, many LLMs combine Top-p with Temperature — for example top_p=0.9, temperature=0.8 is one illustrative configuration, not",
+      "prefix after causal self-attention — not from the unknown future token being \ngenerated. The decoder has already processed the known prefix before \ncomputing cross-attention.\nKey properties\nA has shape [n_tgt, n_src] — rectangular, not square\nSoftmax is along source-key columns (axis=1)\nHead output is [n_tgt, d_v]\nSource and target lengths need not match\nThe full known source can be consulted (excluding \npadding)\nCausal masking applies to target self-attention, NOT to \ncross-attention over the full source\nIn a separate-memory encoder–decoder architecture, \ncross-attention provides the bridge between source \nand target. Decoder-only models handle this \ndifferently — source text is included in the prompt \nand processed by causal self-attention.",
+      "SECTION 4 · ONE-HOT\nOne-hot: a 1 and zeros\nPrinciple\nA vector of size |V| (vocabulary size). A single 1 at the token's index, the rest \n0.\nExample (V = 5):\n\"cat\" = [0, 0, 1, 0, 0]\nVisualization\n0 0\n1 0\n0\n←  index of token \"cat\"",
+      "Which settings control generation?\nlogits →  ÷ T →  softmax →  top-k / top-p →  renormalize →  random draw (seed) →  token\nSetting What it does Starting value\ntemperature tightens or spreads the probabilities 0–0.3 for extraction; 0.7 for chat\ntop_p cuts the long tail 0.9–1\nmax_tokens maximum answer length (stop condition 2 \nof the loop)\ndepends on the task\nstop strings that end the generation e.g., \"###\"\nseed fixes the random draw to reproduce a result a fixed integer for tests\nfrequency / presence penalty lowers the logits of tokens already used → \nfewer repetitions\n0; 0.2–0.5 if the text loops\nThe same settings appear everywhere (playground, API, Ollama, vLLM): change one at a time and compare on several examples."
+    ],
+    "retrieved_pages": [
+      164,
+      154,
+      102,
+      15,
+      176
+    ],
+    "reference_pages": [
+      164
+    ],
+    "duration_seconds": 12.77
+  }
+]
