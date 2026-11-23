@@ -1,7 +1,7 @@
 # COMPTE-RENDU — TP 4 : Assistant documentaire RAG avec évaluation et traçage
 
 **Module :** Transformers & LLMs — ENSAM Casablanca  
-**Étudiantes :** Oumayma Zerrik ,Hala Belmoukhtar
+**Étudiantes :** Oumayma Zerrik ,** Hala Belmoukhtar
 **Filière :** Master Big Data & Internet of Things  
 **Cas d'usage :** 1 — Assistant documentaire du cours Transformers & LLMs  
 **Langue des documents et des questions de test :** anglais  
